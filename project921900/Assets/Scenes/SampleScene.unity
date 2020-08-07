@@ -311,7 +311,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _shader: {fileID: 4800000, guid: 73921b3feb8c17a459c4e03c506d1e13, type: 3}
   _maxDistance: 200
-  _sphere1: {x: 0, y: 2.16, z: -0.91, w: 2}
+  _sphere1: {x: 0, y: 2.16, z: -2.84, w: 3.37}
+  genene: 0
   _box1: {x: 0, y: 0.8, z: 0, w: 2}
   _directionalLight: {fileID: 705507995}
   _modInterval: {x: 0, y: 0, z: 0}
