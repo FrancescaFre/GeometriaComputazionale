@@ -23,6 +23,23 @@
             uniform sampler2D _CameraDepthTexture;
             uniform float4x4 _CamFrustum, _CamToWorld;
             
+            //---
+
+            int _ArrayLength = 0;
+            uniform float _Array[10];
+
+            uniform float _shapes[10];
+            uniform float _ops[10];
+            uniform float _sel[10];
+            uniform float _auto[10];
+            uniform float _morph[10];
+            uniform float _size[10];
+            uniform float3 _positions[10];
+            uniform float4 _rotations[10];
+            uniform float4 _colors[10];
+            
+            //--
+
             uniform float _accuracy;
             uniform float _maxDistance;
             uniform float _boxround;

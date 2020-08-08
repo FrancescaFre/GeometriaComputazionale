@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
@@ -111,9 +112,21 @@ public class raymarchcamera : SceneViewFilter
 
     public Color _mainColor, _LightColor;
 
-    public Vector4 _sphere1, _sphere2, _box1; 
+    public Vector4 _sphere1, _sphere2, _box1;
 
-
+    //---- Blocks variables
+    
+    float[] array = new float[] { 1, 2, 3, 4 };
+    float[] shapes = new float[10];
+    float[] ops = new float[10];
+    float[] sel = new float[10];
+    float[] auto = new float[10];
+    float[] morphs = new float[10]; 
+    float[] size = new float[10];
+    Vector4[] positions = new Vector4[10];
+    Vector4[] rotations = new Vector4[10];
+    Vector4[] colors = new Vector4[10]; 
+    //----
 
     //----- Interfaccia con lo shader
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -147,10 +160,48 @@ public class raymarchcamera : SceneViewFilter
         _raymarchMaterial.SetVector("_sphere2", _sphere2);
         _raymarchMaterial.SetVector("_box1", _box1);
 
+        _raymarchMaterial.SetFloatArray("_Array", array);
+
+        //-------------- Blocks variables
+        _raymarchMaterial.SetFloatArray("_shapes", shapes);
+        _raymarchMaterial.SetFloatArray("_ops", shapes);
+        _raymarchMaterial.SetFloatArray("_sel", shapes);
+        _raymarchMaterial.SetFloatArray("_auto", shapes);
+        _raymarchMaterial.SetFloatArray("_morph", shapes);
+        _raymarchMaterial.SetFloatArray("_size", shapes);
+        _raymarchMaterial.SetVectorArray("_positions", positions);
+        _raymarchMaterial.SetVectorArray("_rotations", rotations);
+        _raymarchMaterial.SetVectorArray("_colors", colors);
+        //--------------
+
         _raymarchMaterial.SetTexture("_MainTex", source);
 
         PushCoords(source, destination);
     }
 
+    public void UpdateData(List<Block> blocks) {
+      
+        shapes = new float[10];
+        ops = new float[10];
+        sel = new float[10];
+        auto = new float[10];
+        morphs = new float[10];
+        size = new float[10];
+        positions = new Vector4[10];
+        rotations = new Vector4[10];
+        colors = new Vector4[10];
 
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            shapes[i] = blocks[i].shape;
+            ops[i] = blocks[i].op;
+            sel[i] = blocks[i].selected;
+            size[i] = blocks[i].size;
+            auto[i] = blocks[i].auto;
+            morphs[i] = blocks[i].morph;
+            positions[i] = blocks[i].position;
+            rotations[i] = blocks[i].rotation;
+            colors[i] = blocks[i].color;
+        }
+    }
 }

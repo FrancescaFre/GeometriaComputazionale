@@ -309,11 +309,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b85cdf8dfa7bbfb49b5ac8c60793cb23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shader: {fileID: 4800000, guid: 49172360fa5f3104d814c3198b1752bb, type: 3}
+  _shader: {fileID: 4800000, guid: 73921b3feb8c17a459c4e03c506d1e13, type: 3}
   _accuracy: 0.01
   _maxDistance: 200
   _boxround: 0
-  _smooth1: 0
+  _smooth1: 1.47
   _smooth2: 0
   _LightInt: 1
   _ShadowIntensity: 1.42
@@ -324,6 +324,6 @@ MonoBehaviour:
   _modInterval: {x: 0, y: 0, z: 0}
   _mainColor: {r: 0, g: 0.16104317, b: 1, a: 0}
   _LightColor: {r: 1, g: 1, b: 1, a: 0}
-  _sphere1: {x: 0, y: 2.16, z: -2.84, w: 3.37}
-  _sphere2: {x: 0, y: 0, z: 0, w: 3.83}
+  _sphere1: {x: 0, y: 2.16, z: -2.46, w: 3.32}
+  _sphere2: {x: 0, y: 1.15, z: 0, w: 4.42}
   _box1: {x: 0, y: 0.8, z: 0, w: 2}
