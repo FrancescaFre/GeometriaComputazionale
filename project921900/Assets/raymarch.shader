@@ -85,7 +85,7 @@
                 }
                 float s1 = sdSphere((p - _sphere1.xyz), _sphere1.w);
                 float b1 = sdBox(p - _box1.xyz, _box1.www);
-                return opS(s1, b1);
+                return SmoothUnion(s1, b1, _smooth1);
             }
 
             float3 getNormal(float3 p)
@@ -99,10 +99,51 @@
                 return normalize(n);
             }
 
+            float3 hardShadow(float3 ro, float3 rd, float mint, float maxt)
+            {
+                for (float t = mint; t < maxt; )
+                {
+                    float h = distanceField(ro + rd * t);
+                    if (h < 0.001)
+                        return 0.0;
+                    t += h;
+                }
+                return 1.0;
+            }
+
+            float3 softShadow(float3 ro, float3 rd, float mint, float maxt, float k)
+            {
+                float result = 1.0;
+                for (float t = mint; t < maxt; )
+                {
+                    float h = distanceField(ro + rd * t);
+                    if (h < 0.001)
+                        return 0.0;
+                    result = min(result, k * h / t);
+                    t += h;
+                }
+                return result;
+            }
+
+
+
+            float3 Shading(float3 p, float3 n)
+            {
+                float3 result;
+                float3 color = _mainColor.rgb;
+
+                float3 light = (_LightColor * dot(-_LightDir, n) * 0.5 + 0.5) * _LightInt;
+
+                float shadow = softShadow(p, -_LightDir, _shadowDistance.x, _shadowDistance.y, _penumbra) * 0.5 + 0.5; //shadow intensity
+                shadow = max(0.0, pow(shadow, _ShadowIntensity));
+                result = color * light * shadow;
+                return result;
+            }
+
             fixed4 raymarching(float3 ro, float3 rd, float depth)
             {
                 fixed4 result = fixed4(1, 1, 1, 1);
-                const int max_iteration = 124;
+                const int max_iteration = _maxIterations;
                 float t = 0; //distance travelled along the ray dir
 
                 for (int i = 0; i < max_iteration; i++)
@@ -116,14 +157,14 @@
                     float3 p = ro + rd * t; //position
                     //check in distancefield
                     float d = distanceField(p);
-                    if (d < 0.01)
+                    if (d < _accuracy)
                     {
                         //shading
                         float3 n = getNormal(p);
-                        float light = dot(-_LightDir, n);
+                        float3 s = Shading(p, n);
+    
 
-
-                        result = fixed4(_mainColor.rgb * light, 1);
+                        result = fixed4(s, 1);
                         break;
                     }
                     t += d;
