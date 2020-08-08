@@ -92,15 +92,28 @@ public class raymarchcamera : SceneViewFilter
     }
     #endregion
 
-    public float _maxDistance;
+    public float _accuracy = 0.01f;
+    public float _maxDistance = 200;
+    public float _boxround;
+    public float _smooth1;
+    public float _smooth2;
+    public float _LightInt = 1;
+    public float _ShadowIntensity = 0.5f;
+    public float _penumbra = 0.4f;
 
-    public Vector4 _sphere1;
-    public float genene;
+    public int _maxIterations = 200;
 
-    public Vector4 _box1;
+    public Vector2 _shadowDistance = new Vector2(0.1f, 10f); 
+
     public Transform _directionalLight;
+
     public Vector3 _modInterval;
-    public Color _mainColor;
+
+    public Color _mainColor, _LightColor;
+
+    public Vector4 _sphere1, _sphere2, _box1; 
+
+
 
     //----- Interfaccia con lo shader
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -110,14 +123,30 @@ public class raymarchcamera : SceneViewFilter
             Graphics.Blit(source, destination);
             return;
         }
+
         _raymarchMaterial.SetMatrix("_CamFrustum", CamFrustum(_camera));
         _raymarchMaterial.SetMatrix("_CamToWorld", _camera.cameraToWorldMatrix);
+
+        _raymarchMaterial.SetFloat("_accuracy", _accuracy);
         _raymarchMaterial.SetFloat("_maxDistance", _maxDistance);
-        _raymarchMaterial.SetVector("_sphere1", _sphere1);
+        _raymarchMaterial.SetFloat("_smooth1", _smooth1);
+        _raymarchMaterial.SetFloat("_smooth2", _smooth2);
+        _raymarchMaterial.SetFloat("_LightInt", _LightInt);
+        _raymarchMaterial.SetFloat("_ShadowIntensity", _ShadowIntensity);
+        _raymarchMaterial.SetFloat("_penumbra", _penumbra);
+
+        _raymarchMaterial.SetInt("_maxIterations", _maxIterations);
+
+        _raymarchMaterial.SetVector("_shadowDistance", _shadowDistance);
         _raymarchMaterial.SetVector("_LightDir", _directionalLight ? _directionalLight.forward : Vector3.down);
-        _raymarchMaterial.SetVector("_box1", _box1);
-        _raymarchMaterial.SetColor("_mainColor", _mainColor);
         _raymarchMaterial.SetVector("_modInterval", _modInterval);
+        _raymarchMaterial.SetVector("_mainColor", _mainColor);
+        _raymarchMaterial.SetVector("_LightColor", _LightColor);
+        _raymarchMaterial.SetVector("_mainColor", _mainColor);
+        _raymarchMaterial.SetVector("_sphere1", _sphere1);
+        _raymarchMaterial.SetVector("_sphere2", _sphere2);
+        _raymarchMaterial.SetVector("_box1", _box1);
+
         _raymarchMaterial.SetTexture("_MainTex", source);
 
         PushCoords(source, destination);

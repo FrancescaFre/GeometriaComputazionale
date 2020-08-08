@@ -21,12 +21,29 @@
 
             sampler2D _MainTex;
             uniform sampler2D _CameraDepthTexture;
-            uniform float _maxDistance;
             uniform float4x4 _CamFrustum, _CamToWorld;
-            uniform float4 _sphere1, _box1;
+            
+            uniform float _accuracy;
+            uniform float _maxDistance;
+            uniform float _boxround;
+            uniform float _smooth1;
+            uniform float _smooth2;
+            uniform float _LightInt;
+            uniform float _ShadowIntensity;
+            uniform float _penumbra;
+
+            uniform int _maxIterations;
+
+            uniform float2 _shadowDistance;
+
             uniform float3 _LightDir;
-            uniform fixed4 _mainColor;
+
             uniform float3 _modInterval;
+
+            uniform fixed4 _mainColor, _LightColor;
+
+            uniform float4 _sphere1, _sphere2, _box1;
+
 
             struct appdata
             {
