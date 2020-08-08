@@ -125,7 +125,9 @@ public class raymarchcamera : SceneViewFilter
     float[] size = new float[10];
     Vector4[] positions = new Vector4[10];
     Vector4[] rotations = new Vector4[10];
-    Vector4[] colors = new Vector4[10]; 
+    Vector4[] colors = new Vector4[10];
+
+    int scene_size = 0;
     //----
 
     //----- Interfaccia con lo shader
@@ -172,6 +174,8 @@ public class raymarchcamera : SceneViewFilter
         _raymarchMaterial.SetVectorArray("_positions", positions);
         _raymarchMaterial.SetVectorArray("_rotations", rotations);
         _raymarchMaterial.SetVectorArray("_colors", colors);
+
+        _raymarchMaterial.SetInt("_scene_size", scene_size); 
         //--------------
 
         _raymarchMaterial.SetTexture("_MainTex", source);

@@ -2,6 +2,7 @@
 {
     Properties
     {
+
         _MainTex("Texture", 2D) = "white" {}
     }
         SubShader
@@ -11,6 +12,7 @@
 
         Pass
         {
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -19,27 +21,32 @@
             #include "UnityCG.cginc"
             #include "DistanceFunctions.cginc"
 
+             #define SCENE_SIZE 10
+
             sampler2D _MainTex;
+
             uniform sampler2D _CameraDepthTexture;
             uniform float4x4 _CamFrustum, _CamToWorld;
             
-            //---
+            //--- INPUT DATA BLOCKS
 
             int _ArrayLength = 0;
-            uniform float _Array[10];
+            uniform float _Array[SCENE_SIZE];
 
-            uniform float _shapes[10];
-            uniform float _ops[10];
-            uniform float _sel[10];
-            uniform float _auto[10];
-            uniform float _morph[10];
-            uniform float _size[10];
-            uniform float3 _positions[10];
-            uniform float4 _rotations[10];
-            uniform float4 _colors[10];
-            
-            //--
+            uniform float _shapes[SCENE_SIZE];
+            uniform float _ops[SCENE_SIZE];
+            uniform float _sel[SCENE_SIZE];
+            uniform float _auto[SCENE_SIZE];
+            uniform float _morph[SCENE_SIZE];
+            uniform float _size[SCENE_SIZE];
+            uniform float3 _positions[SCENE_SIZE];
+            uniform float4 _rotations[SCENE_SIZE];
+            uniform float4 _colors[SCENE_SIZE];
 
+            uniform int _scene_size;
+           
+
+            //--- INPUT DATA RENDERING
             uniform float _accuracy;
             uniform float _maxDistance;
             uniform float _boxround;
@@ -60,7 +67,35 @@
             uniform fixed4 _mainColor, _LightColor;
 
             uniform float4 _sphere1, _sphere2, _box1;
+           
+            //--- DATA STRUCTUREs
+            struct block {
+                float shape;
+                float op;
+                float sel;
+                float auto_;
+                float morph;
+                float size;
+                float3 position;
+                float4 rotation;
+                float4 color;
+            };
 
+            block scene[SCENE_SIZE]; 
+
+            struct Hit {
+                float dist; 
+                float3 color; 
+                float3 hitPos; 
+                int subject; 
+                int selected;
+            };
+
+            struct RM {
+                Hit hit; 
+                float travel; 
+            };
+            //--
 
             struct appdata
             {
@@ -92,6 +127,11 @@
                 return o;
             }
 
+            float2x2 Rotation(float a) {
+                float s = sin(a);
+                float c = cos(a);
+                return float2x2(c, -s, s, c);
+            }
 
             float distanceField(float3 p)
             {
@@ -105,6 +145,7 @@
                 return SmoothUnion(s1, b1, _smooth1);
             }
 
+            //---- SHADING
             float3 getNormal(float3 p)
             {
                 const float2 offset = float2(0.001, 0.0);
@@ -142,8 +183,6 @@
                 return result;
             }
 
-
-
             float3 Shading(float3 p, float3 n)
             {
                 float3 result;
@@ -157,9 +196,12 @@
                 return result;
             }
 
+
+            //---- RAYMARCHING
             fixed4 raymarching(float3 ro, float3 rd, float depth)
             {
                 fixed4 result = fixed4(1, 1, 1, 1);
+
                 const int max_iteration = _maxIterations;
                 float t = 0; //distance travelled along the ray dir
 
@@ -197,6 +239,27 @@
                 fixed3 col = tex2D(_MainTex, i.uv);
                 float3 rayDirection = normalize(i.ray.xyz);
                 float3 rayOrigin = _WorldSpaceCameraPos;
+
+                //update data
+                for (int i = 0; i < _scene_size; i++)
+                {
+                    float x = _shapes[i]; //questo non da warning
+
+                    /* 
+                    //questo da warning: 
+                    //array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll
+                    
+                    scene[i].op = _ops[i];
+                    scene[i].sel = _sel[i];
+                    scene[i].auto_ = _auto[i];
+                    scene[i].morph = _morph[i];
+                    scene[i].size = _size[i];
+                    scene[i].position = _positions[i];
+                    scene[i].rotation = _rotations[i];
+                    scene[i].color = _colors[i];*/
+                }
+
+
                 fixed4 result = raymarching(rayOrigin, rayDirection, depth);
 
                 return fixed4(col * (1.0 - result.w) + result.xyz * result.w, 1.0);

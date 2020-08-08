@@ -322,7 +322,7 @@ MonoBehaviour:
   _shadowDistance: {x: 0.1, y: 10}
   _directionalLight: {fileID: 705507995}
   _modInterval: {x: 0, y: 0, z: 0}
-  _mainColor: {r: 0, g: 0.16104317, b: 1, a: 0}
+  _mainColor: {r: 0.9669811, g: 0.97229004, b: 1, a: 0}
   _LightColor: {r: 1, g: 1, b: 1, a: 0}
   _sphere1: {x: 0, y: 2.16, z: -2.46, w: 3.32}
   _sphere2: {x: 0, y: 1.15, z: 0, w: 4.42}
