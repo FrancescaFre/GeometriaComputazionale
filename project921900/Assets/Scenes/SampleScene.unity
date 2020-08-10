@@ -225,6 +225,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -309,7 +310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b85cdf8dfa7bbfb49b5ac8c60793cb23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shader: {fileID: 4800000, guid: 73921b3feb8c17a459c4e03c506d1e13, type: 3}
+  _shader: {fileID: 4800000, guid: 2a763c994c1d7c04c8cdb134c433c7e4, type: 3}
   _accuracy: 0.01
   _maxDistance: 200
   _boxround: 0
@@ -323,7 +324,73 @@ MonoBehaviour:
   _directionalLight: {fileID: 705507995}
   _modInterval: {x: 0, y: 0, z: 0}
   _mainColor: {r: 0.9669811, g: 0.97229004, b: 1, a: 0}
-  _LightColor: {r: 1, g: 1, b: 1, a: 0}
+  _LightColor: {r: 1, g: 0.033018887, b: 0.033018887, a: 0}
   _sphere1: {x: 0, y: 2.16, z: -2.46, w: 3.32}
   _sphere2: {x: 0, y: 1.15, z: 0, w: 4.42}
   _box1: {x: 0, y: 0.8, z: 0, w: 2}
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 407fb4227ab2756448b96f241195b4b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  all_blocks: []
+  rm: {fileID: 0}
+--- !u!1 &1695479967
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1695479969}
+  - component: {fileID: 1695479968}
+  m_Layer: 0
+  m_Name: block0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1695479968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1695479967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36c7780ee8ef92e44987e841520d31ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shape: 0
+  op: 1
+  selected: 0
+  size: 1
+  auto: 0
+  morph: 0
+  position: {x: 0, y: 0, z: 0}
+  rotation: {x: 0, y: 0, z: 0, w: 0}
+  color: {r: 0.8679245, g: 0.028657902, b: 0.028657902, a: 0}
+--- !u!4 &1695479969
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1695479967}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

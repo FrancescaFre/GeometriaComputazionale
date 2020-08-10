@@ -5,13 +5,13 @@ using UnityEngine;
 public class Controller : MonoBehaviour
 {
 
-    private List<Block> all_blocks; 
-
+    public List<Block> all_blocks;
+    public raymarchcamera rm; 
     //RaymarchingMaster rm; 
     // Start is called before the first frame update
     void Start()
     {
-        
+        rm = GetComponent<raymarchcamera>();
     }
 
     // Update is called once per frame
@@ -26,6 +26,6 @@ public class Controller : MonoBehaviour
                 all_blocks.Add(block);               
         }
 
-        //rm.UpdateSceneData(all_blocks); 
+        rm.UpdateData(all_blocks); 
     }
 }

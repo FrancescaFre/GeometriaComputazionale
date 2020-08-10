@@ -1,4 +1,4 @@
-﻿﻿Shader "Project/RaymarchShader"
+﻿﻿Shader "Project/RaymarchShaderSimple"
 {
     Properties
     {
@@ -27,7 +27,7 @@
 
             uniform sampler2D _CameraDepthTexture;
             uniform float4x4 _CamFrustum, _CamToWorld;
-            
+
             //--- INPUT DATA BLOCKS
 
             int _ArrayLength = 0;
@@ -44,8 +44,8 @@
             uniform float4 _colors[SCENE_SIZE];
 
             uniform int _scene_size;
-            uniform int plane = 0; 
-           
+            uniform int plane = 0;
+
 
             //--- INPUT DATA RENDERING
             uniform float _accuracy;
@@ -68,7 +68,7 @@
             uniform fixed4 _mainColor, _LightColor;
 
             uniform float4 _sphere1, _sphere2, _box1;
-           
+
             //--- DATA STRUCTUREs
             struct block {
                 float shape;
@@ -82,11 +82,11 @@
                 float4 color;
             };
 
-            static block scene[SCENE_SIZE]; 
+            static block scene[SCENE_SIZE];
 
             struct RM {
-                Hit hit; 
-                float travel; 
+                Hit hit;
+                float travel;
             };
             //--
 
@@ -131,37 +131,37 @@
             Hit ShapeDistance(float3 raypos, block b)
             {
                 if (b.shape == 0)
-                    return df_Sphere(raypos, b.position, b.size); 
+                    return df_Sphere(raypos, b.position, b.size);
                 if (b.shape == 1)
-                    return df_Box(raypos, b.position, b.size); 
+                    return df_Box(raypos, b.position, b.size);
                 if (b.shape == 2)
-                    return df_Torus (raypos, b.position, b.size);
+                    return df_Torus(raypos, b.position, b.size);
 
-                Hit hit; 
+                Hit hit;
                 return hit;
             }
 
             float3 GetColor(float3 raypos) {
-                float3 color = float3 (0.0, 0.0, 0.0); 
-                if(plane == 1)
+                float3 color = float3 (0.0, 0.0, 0.0);
+                if (plane == 1)
                     color = max(0.0, 1.0 - df_Plane(raypos).dist) * float3(0.0, 0.4, 0.0) * 1.0;
 
                 for (int i = 0; i < SCENE_SIZE; i++) {
                     if (scene[i].op != 1.0)
                         color += max(0.0, 1.0 - ShapeDistance(raypos, scene[i]).dist) * scene[i].color * 1.0;
                 }
-                return color; 
+                return color;
             }
 
             //provare a metterlo dentro i for di distance field
             float GetBorder(float3 raypos) {
-                float border = 0.0; 
+                float border = 0.0;
                 for (int i = 0; i < SCENE_SIZE; i++) {
-                    Hit shape = ShapeDistance(raypos, scene[i]); 
+                    Hit shape = ShapeDistance(raypos, scene[i]);
                     if (shape.dist < 0.3)
-                        border += scene[i].sel; 
+                        border += scene[i].sel;
                 }
-                return clamp(border, 0.0, 1.0); 
+                return clamp(border, 0.0, 1.0);
             }
 
 
@@ -172,7 +172,7 @@
                 result.dist = 1e20;
                 if (plane == 1)
                     result = df_Plane(p);
-                
+
                 //union
                 for (int i = 0; i < SCENE_SIZE; i++) {
                     if (scene[i].op == 0.0) {
@@ -198,21 +198,12 @@
                     }
                 }
 
-                result.color = GetColor(p); 
+                result.color = GetColor(p);
                 result.selected = GetBorder(p);
-                return result; 
+                return result;
 
             }
-            /*
-                if (_modInterval.x != 0 && _modInterval.y != 0 && _modInterval.z != 0) {
-                    float modX = pMod1(p.x, _modInterval.x);
-                    float modY = pMod1(p.y, _modInterval.y);
-                    float modZ = pMod1(p.z, _modInterval.z);
-                }
-                float s1 = sdSphere((p - _sphere1.xyz), _sphere1.w);
-                float b1 = sdBox(p - _box1.xyz, _box1.www);
-                return SmoothUnion(s1, b1, _smooth1);*/
-            
+         
 
             //---- SHADING
             float3 getNormal(float3 p)
@@ -240,7 +231,7 @@
                 return result;
             }
 
-            float3 Rendering(float3 p, float3 cameraPosition, Hit target){
+            float3 Rendering(float3 p, float3 cameraPosition, Hit target) {
                 float3 result;
                 float3 color = target.color;
                 float3 n = getNormal(p);
@@ -268,12 +259,12 @@
 
 
             //---- RAYMARCHING
-            RM raymarching(float3 ro, float3 rd, float depth)
+            RM Raymarching(float3 ro, float3 rd, float depth)
             {
                 const int max_iteration = _maxIterations;
                 float t = 0; //distance travelled along the ray dir
 
-                Hit hit; 
+                Hit hit;
 
                 for (int i = 0; i < max_iteration; i++)
                 {
@@ -300,14 +291,16 @@
                 fixed3 col = tex2D(_MainTex, i.uv);
                 float3 rayDirection = normalize(i.ray.xyz);
                 float3 rayOrigin = _WorldSpaceCameraPos;
-
+                   
+                
                 //update data
-                //[unroll] ///array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll
-                for (int i = 0; i < SCENE_SIZE; i++)
+                [unroll] ///array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll
+                for (int i = 0; i < 1; i++)
                 {
 
                     // warning: 
                     //array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll 
+                    scene[i].shape = _shapes[i];
                     scene[i].op = _ops[i];
                     scene[i].sel = _sel[i];
                     scene[i].auto_ = _auto[i];
@@ -315,17 +308,21 @@
                     scene[i].size = _size[i];
                     scene[i].position = _positions[i];
                     scene[i].rotation = _rotations[i];
-                    scene[i].color = _colors[i];
+                    scene[i].color = _colors[i];   
                 }
-
+               
                 //to do: mettere un campo in rm per indicare il result.w = 0, in modo che appaia lo sfondo
                 //fixed4 result = raymarching(rayOrigin, rayDirection, depth);
-                RM raymarch = raymarching(rayOrigin, rayDirection, depth);
-                float4 color = float4(0, 0, 0, 0);
+                RM raymarch = Raymarching(rayOrigin, rayDirection, depth);
+
+                float a = raymarch.travel / 35.0; 
+                float4 color = float4(a, a, a, 1.0);
+
+                return color;
 
                 if (raymarch.hit.dist < _accuracy)
                 {
-                    float3 hit_point = rayOrigin + rayDirection * raymarch.travel; 
+                    float3 hit_point = rayOrigin + rayDirection * raymarch.travel;
                     color = float4(Rendering(hit_point, rayOrigin, raymarch.hit),1);
                 }
 

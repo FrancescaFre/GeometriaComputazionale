@@ -166,11 +166,11 @@ public class raymarchcamera : SceneViewFilter
 
         //-------------- Blocks variables
         _raymarchMaterial.SetFloatArray("_shapes", shapes);
-        _raymarchMaterial.SetFloatArray("_ops", shapes);
-        _raymarchMaterial.SetFloatArray("_sel", shapes);
-        _raymarchMaterial.SetFloatArray("_auto", shapes);
-        _raymarchMaterial.SetFloatArray("_morph", shapes);
-        _raymarchMaterial.SetFloatArray("_size", shapes);
+        _raymarchMaterial.SetFloatArray("_ops", ops);
+        _raymarchMaterial.SetFloatArray("_sel", sel);
+        _raymarchMaterial.SetFloatArray("_auto", auto);
+        _raymarchMaterial.SetFloatArray("_morph", morphs);
+        _raymarchMaterial.SetFloatArray("_size", size);
         _raymarchMaterial.SetVectorArray("_positions", positions);
         _raymarchMaterial.SetVectorArray("_rotations", rotations);
         _raymarchMaterial.SetVectorArray("_colors", colors);
@@ -207,5 +207,6 @@ public class raymarchcamera : SceneViewFilter
             rotations[i] = blocks[i].rotation;
             colors[i] = blocks[i].color;
         }
+        
     }
 }
