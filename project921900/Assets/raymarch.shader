@@ -170,9 +170,17 @@
                 Hit result;
 
                 result.dist = 1e20;
-                if (plane == 1)
-                    result = df_Plane(p);
-                
+// if (plane == 1)
+                 return result = df_Plane(p);
+
+                //sub
+                for (int j = 0; j < SCENE_SIZE; j++) {
+                    if (scene[j].op == 1) {
+                        Hit shape = ShapeDistance(p, scene[j]);
+                        result.dist = SmoothSubtraction(result.dist, shape.dist, _smooth2);
+                    }
+                }
+
                 //union
                 for (int i = 0; i < SCENE_SIZE; i++) {
                     if (scene[i].op == 0.0) {
@@ -182,13 +190,6 @@
                     }
                 }
 
-                //sub
-                for (int j = 0; j < SCENE_SIZE; j++) {
-                    if (scene[j].op == 1) {
-                        Hit shape = ShapeDistance(p, scene[j]);
-                        result.dist = SmoothSubtraction(result.dist, shape.dist, _smooth2);
-                    }
-                }
 
                 //intersection
                 for (int k = 0; k < SCENE_SIZE; k++) {
@@ -302,10 +303,9 @@
                 float3 rayOrigin = _WorldSpaceCameraPos;
 
                 //update data
-                //[unroll] ///array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll
+                [unroll] ///array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll
                 for (int i = 0; i < SCENE_SIZE; i++)
                 {
-
                     // warning: 
                     //array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll 
                     scene[i].op = _ops[i];
@@ -318,11 +318,8 @@
                     scene[i].color = _colors[i];
                 }
 
-                //to do: mettere un campo in rm per indicare il result.w = 0, in modo che appaia lo sfondo
-                //fixed4 result = raymarching(rayOrigin, rayDirection, depth);
                 RM raymarch = raymarching(rayOrigin, rayDirection, depth);
-                float4 color = float4(0, 0, 0, 0);
-
+                float4 color = float4(0,0,0,0); 
                 if (raymarch.hit.dist < _accuracy)
                 {
                     float3 hit_point = rayOrigin + rayDirection * raymarch.travel; 

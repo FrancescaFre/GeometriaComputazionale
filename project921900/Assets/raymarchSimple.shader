@@ -147,9 +147,10 @@
                     color = max(0.0, 1.0 - df_Plane(raypos).dist) * float3(0.0, 0.4, 0.0) * 1.0;
 
                 for (int i = 0; i < SCENE_SIZE; i++) {
-                    if (scene[i].op != 1.0)
+                    //if (scene[i].op != 1.0)
                         color += max(0.0, 1.0 - ShapeDistance(raypos, scene[i]).dist) * scene[i].color * 1.0;
                 }
+
                 return color;
             }
 
@@ -169,7 +170,7 @@
             {
                 Hit result;
 
-                result.dist = 1e20;
+                result.dist = 1000000;
                 if (plane == 1)
                     result = df_Plane(p);
 
@@ -181,7 +182,7 @@
                         result.dist = SmoothUnion(result.dist, shape.dist, _smooth1);
                     }
                 }
-
+                
                 //sub
                 for (int j = 0; j < SCENE_SIZE; j++) {
                     if (scene[j].op == 1) {
@@ -241,7 +242,7 @@
                 float shadow = softShadow(p, -_LightDir, _shadowDistance.x, _shadowDistance.y, _penumbra) * 0.5 + 0.5; //shadow intensity
                 shadow = max(0.0, pow(shadow, _ShadowIntensity));
                 result = color * light * shadow;
-                return result;
+                return target.color;
             }
 
             float3 Shading(float3 p, float3 n)
@@ -294,10 +295,9 @@
                    
                 
                 //update data
-                [unroll] ///array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll
+                //[unroll] //: loop only executes for 1 iteration(s), forcing loop to unroll at line 299 (on d3d11)
                 for (int i = 0; i < 1; i++)
                 {
-
                     // warning: 
                     //array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll 
                     scene[i].shape = _shapes[i];
@@ -310,20 +310,18 @@
                     scene[i].rotation = _rotations[i];
                     scene[i].color = _colors[i];   
                 }
-               
+                return _colors[1];
+                return fixed4(scene[1].color); 
                 //to do: mettere un campo in rm per indicare il result.w = 0, in modo che appaia lo sfondo
                 //fixed4 result = raymarching(rayOrigin, rayDirection, depth);
                 RM raymarch = Raymarching(rayOrigin, rayDirection, depth);
 
-                float a = raymarch.travel / 35.0; 
-                float4 color = float4(a, a, a, 1.0);
-
-                return color;
-
+                float4 color = float4(0, 0, 0, 0); 
                 if (raymarch.hit.dist < _accuracy)
                 {
                     float3 hit_point = rayOrigin + rayDirection * raymarch.travel;
-                    color = float4(Rendering(hit_point, rayOrigin, raymarch.hit),1);
+        
+                    color = float4(raymarch.hit.color,1); //(Rendering(hit_point, rayOrigin, raymarch.hit),1);
                 }
 
                 return fixed4(col * (1.0 - color.w) + color.xyz * color.w, 1.0);

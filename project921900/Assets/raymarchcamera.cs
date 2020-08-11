@@ -93,6 +93,8 @@ public class raymarchcamera : SceneViewFilter
     }
     #endregion
 
+    public bool test = false; 
+
     public float _accuracy = 0.01f;
     public float _maxDistance = 200;
     public float _boxround;
@@ -206,6 +208,7 @@ public class raymarchcamera : SceneViewFilter
             positions[i] = blocks[i].position;
             rotations[i] = blocks[i].rotation;
             colors[i] = blocks[i].color;
+            
         }
         
     }

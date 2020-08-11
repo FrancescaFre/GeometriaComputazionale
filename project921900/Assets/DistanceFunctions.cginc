@@ -126,10 +126,8 @@ Hit df_Plane(float3 rayPos)
 {
 	Hit hit;
 	hit.subject = false;
-	//vec4 n = vec4(0., 1., 0., 0.);
-   // hit.dist =  dot(rayPos,n.xyz) + n.w + 0.1*sin(rayPos.z*3.0)*sin(rayPos.x*3.0);
-
 	hit.dist = 2 + rayPos.y;
+	hit.color = float4(0.0, 0.0, 0.0, 0.0); 
 	return hit;
 }
 
