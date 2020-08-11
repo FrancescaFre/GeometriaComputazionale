@@ -128,41 +128,46 @@
 
             //-------------------------------------------- Project
 
-            Hit ShapeDistance(float3 raypos, block b)
+            Hit ShapeDistance(float3 raypos, int i)
             {
-                if (b.shape == 0)
-                    return df_Sphere(raypos, b.position, b.size);
-                if (b.shape == 1)
-                    return df_Box(raypos, b.position, b.size);
-                if (b.shape == 2)
-                    return df_Torus(raypos, b.position, b.size);
+                float3 p = raypos-float3(0,1,0);
+                if (_rotations[i].w == 1.0) {
+                    p.xy = mul(Rotation(90), p.xy);
+                }
+                    
+
+                if (_shapes[i] == 1)
+                    return df_Sphere(raypos, _positions[i], _size[i]);
+                if (_shapes[i] == 2)
+                    return df_Box(p- _positions[i], _positions[i] ,_size[i]);
+                if (_shapes[i] == 3)
+                    return df_Torus(raypos, _positions[i], _size[i]);
 
                 Hit hit;
                 return hit;
             }
 
             float3 GetColor(float3 raypos) {
-                float3 color = float3 (0.0, 0.0, 0.0);
+                float3 color = float3 (0.0,0.0,0.0);
                 if (plane == 1)
                     color = max(0.0, 1.0 - df_Plane(raypos).dist) * float3(0.0, 0.4, 0.0) * 1.0;
 
-                for (int i = 0; i < SCENE_SIZE; i++) {
+                for (int i = 0; i < _scene_size; i++) {
                     //if (scene[i].op != 1.0)
-                        color += max(0.0, 1.0 - ShapeDistance(raypos, scene[i]).dist) * scene[i].color * 1.0;
+                        color += max(0.0, 1.0 - ShapeDistance(raypos, i).dist) * _colors[i] * 1.0;
                 }
 
                 return color;
             }
 
-            //provare a metterlo dentro i for di distance field
             float GetBorder(float3 raypos) {
                 float border = 0.0;
-                for (int i = 0; i < SCENE_SIZE; i++) {
-                    Hit shape = ShapeDistance(raypos, scene[i]);
+                for (int i = 0; i < 10; i++) {
+                    Hit shape = ShapeDistance(raypos, i); 
                     if (shape.dist < 0.3)
-                        border += scene[i].sel;
+                        border += _sel[i];
                 }
-                return clamp(border, 0.0, 1.0);
+                return clamp(border, 0.0, 1.0);   
             }
 
 
@@ -173,34 +178,33 @@
                 result.dist = 1000000;
                 if (plane == 1)
                     result = df_Plane(p);
-
+              
+                
                 //union
-                for (int i = 0; i < SCENE_SIZE; i++) {
-                    if (scene[i].op == 0.0) {
-                        block b = scene[i];
-                        Hit shape = ShapeDistance(p, b);
+                for (int i = 0; i < _scene_size; i++) {
+                    if (_ops[i] == 0.0) {
+                        Hit shape = ShapeDistance(p, i);
                         result.dist = SmoothUnion(result.dist, shape.dist, _smooth1);
                     }
                 }
                 
                 //sub
                 for (int j = 0; j < SCENE_SIZE; j++) {
-                    if (scene[j].op == 1) {
-                        Hit shape = ShapeDistance(p, scene[j]);
+                    if (_ops[j] == 1) {
+                        Hit shape = ShapeDistance(p,j);
                         result.dist = SmoothSubtraction(result.dist, shape.dist, _smooth2);
                     }
                 }
 
                 //intersection
                 for (int k = 0; k < SCENE_SIZE; k++) {
-                    if (scene[k].op == 2) {
-                        Hit shape = ShapeDistance(p, scene[k]);
+                    if (_ops[k] == 2) {
+                        Hit shape = ShapeDistance(p, k);
                         result.dist = SmoothIntersection(result.dist, shape.dist, _smooth1);
                     }
                 }
 
-                result.color = GetColor(p);
-                result.selected = GetBorder(p);
+                result.selected = GetBorder(p); 
                 return result;
 
             }
@@ -233,29 +237,26 @@
             }
 
             float3 Rendering(float3 p, float3 cameraPosition, Hit target) {
+
+                target.selected = GetBorder(p);
                 float3 result;
-                float3 color = target.color;
+                float3 color = GetColor(p); 
                 float3 n = getNormal(p);
 
-                float3 light = (_LightColor * dot(-_LightDir, n) * 0.5 + 0.5) * _LightInt;
-
-                float shadow = softShadow(p, -_LightDir, _shadowDistance.x, _shadowDistance.y, _penumbra) * 0.5 + 0.5; //shadow intensity
-                shadow = max(0.0, pow(shadow, _ShadowIntensity));
-                result = color * light * shadow;
-                return target.color;
-            }
-
-            float3 Shading(float3 p, float3 n)
-            {
-                float3 result;
-                float3 color = _mainColor.rgb;
+                if (target.selected == 1.0) {
+                    float border = dot(normalize(cameraPosition - p), n);
+                    if (border > -0.3 && border < 0.3)
+                        return float3(1.0,1.0,1.0);
+                }
 
                 float3 light = (_LightColor * dot(-_LightDir, n) * 0.5 + 0.5) * _LightInt;
 
                 float shadow = softShadow(p, -_LightDir, _shadowDistance.x, _shadowDistance.y, _penumbra) * 0.5 + 0.5; //shadow intensity
                 shadow = max(0.0, pow(shadow, _ShadowIntensity));
                 result = color * light * shadow;
-                return result;
+
+               
+                return result; 
             }
 
 
@@ -295,23 +296,8 @@
                    
                 
                 //update data
-                //[unroll] //: loop only executes for 1 iteration(s), forcing loop to unroll at line 299 (on d3d11)
-                for (int i = 0; i < 1; i++)
-                {
-                    // warning: 
-                    //array reference cannot be used as an l-value; not natively addressable, forcing loop to unroll 
-                    scene[i].shape = _shapes[i];
-                    scene[i].op = _ops[i];
-                    scene[i].sel = _sel[i];
-                    scene[i].auto_ = _auto[i];
-                    scene[i].morph = _morph[i];
-                    scene[i].size = _size[i];
-                    scene[i].position = _positions[i];
-                    scene[i].rotation = _rotations[i];
-                    scene[i].color = _colors[i];   
-                }
-                return _colors[1];
-                return fixed4(scene[1].color); 
+               
+               
                 //to do: mettere un campo in rm per indicare il result.w = 0, in modo che appaia lo sfondo
                 //fixed4 result = raymarching(rayOrigin, rayDirection, depth);
                 RM raymarch = Raymarching(rayOrigin, rayDirection, depth);
@@ -320,8 +306,8 @@
                 if (raymarch.hit.dist < _accuracy)
                 {
                     float3 hit_point = rayOrigin + rayDirection * raymarch.travel;
-        
-                    color = float4(raymarch.hit.color,1); //(Rendering(hit_point, rayOrigin, raymarch.hit),1);
+                      
+                    color = float4(Rendering(hit_point, rayOrigin, raymarch.hit),1) ;
                 }
 
                 return fixed4(col * (1.0 - color.w) + color.xyz * color.w, 1.0);

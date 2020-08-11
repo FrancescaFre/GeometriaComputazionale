@@ -197,6 +197,8 @@ public class raymarchcamera : SceneViewFilter
         rotations = new Vector4[10];
         colors = new Vector4[10];
 
+        scene_size = blocks.Count;
+
         for (int i = 0; i < blocks.Count; i++)
         {
             shapes[i] = blocks[i].shape;
