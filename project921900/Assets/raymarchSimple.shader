@@ -120,28 +120,51 @@
                 return o;
             }
 
-            float2x2 Rotation(float a) {
+            float3 Rotation(float3 ray, float4 rotation_vector) {
+                float a = rotation_vector.w; 
                 float s = sin(a);
                 float c = cos(a);
-                return float2x2(c, -s, s, c);
+                float2x2 rotation_mat = float2x2(c, -s, s, c);
+
+                if (rotation_vector.x == 1.0 && rotation_vector.y == 1.0)
+                {
+                    ray.xy = mul(rotation_mat, ray.xy);
+                    return ray;
+                }
+                if (rotation_vector.x == 1.0 && rotation_vector.z == 1.0)
+                {
+                    ray.xz = mul(rotation_mat, ray.xz);
+                    return ray;
+                }
+                if (rotation_vector.z == 1.0 && rotation_vector.y == 1.0)
+                {
+                    ray.zy = mul(rotation_mat, ray.zy);
+                    return ray;
+                }
+
+               
+                return ray; 
+               
             }
 
             //-------------------------------------------- Project
 
             Hit ShapeDistance(float3 raypos, int i)
             {
-                float3 p = raypos-float3(0,1,0);
-                if (_rotations[i].w == 1.0) {
-                    p.xy = mul(Rotation(90), p.xy);
-                }
-                    
+                float3 p = raypos; 
+
+                p = p - _positions[i];
+
+                
+                p = Rotation(p, _rotations[i]); 
+                //p.xy = mul(Rotation(90, _rotations[i]), p.xy);
 
                 if (_shapes[i] == 1)
-                    return df_Sphere(raypos, _positions[i], _size[i]);
+                    return df_Sphere(p, _size[i]);
                 if (_shapes[i] == 2)
-                    return df_Box(p- _positions[i], _positions[i] ,_size[i]);
+                    return df_Box(p , _size[i]);
                 if (_shapes[i] == 3)
-                    return df_Torus(raypos, _positions[i], _size[i]);
+                    return df_Torus(p, _size[i]);
 
                 Hit hit;
                 return hit;

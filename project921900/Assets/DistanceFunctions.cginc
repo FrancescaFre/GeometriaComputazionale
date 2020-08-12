@@ -11,15 +11,6 @@ float sdSphere(float3 p, float s)
 	return length(p) - s;
 }
 
-Hit df_Sphere(float3 rayPos, float3 spherePos, float size)
-{
-	float d = length(rayPos - spherePos) - size;
-	Hit hit;
-	hit.dist = d;
-	hit.subject = true;
-	return hit;
-}
-
 // Box
 // b: size of box in x/y/z
 float sdBox(float3 p, float3 b)
@@ -142,18 +133,17 @@ Hit df_Plane(float3 rayPos)
 	return hit;
 }
 
-Hit df_Sphere(float3 rayPos, float3 spherePos, float size)
+Hit df_Sphere(float3 pos,  float size)
 {
-	float d = length(rayPos - spherePos) - size;
+	float d = length(pos) - size;
 	Hit hit;
 	hit.dist = d;
 	hit.subject = true;
 	return hit;
 }
 
-Hit df_Box(float3 rayPos, float3 pos, float s)
+Hit df_Box( float3 pos, float s)
 {
-	pos = rayPos - pos;
 	float3 size = float3(s, s, s);
 	float3 d = abs(pos) - size;
 	float dist = length(max(d, 0.0))
@@ -165,9 +155,8 @@ Hit df_Box(float3 rayPos, float3 pos, float s)
 	return hit;
 }
 
-Hit df_Torus(float3 rayPos, float3 pos, float rad) //radius have 2 radius, the main shape and the radius of the border
+Hit df_Torus(float3 pos, float rad) //radius have 2 radius, the main shape and the radius of the border
 {
-	pos = rayPos - pos;
 	float2 radius = float2(rad, rad * 0.3);
 	float2 q = float2(length(pos.xz) - radius.x, pos.y);
 	float dist = length(q) - radius.y;
