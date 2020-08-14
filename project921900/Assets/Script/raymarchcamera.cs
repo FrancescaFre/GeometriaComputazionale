@@ -114,6 +114,7 @@ public class raymarchcamera : SceneViewFilter
 
     public Color _LightColor;
 
+    public int _plane = 0; 
 
     //---- Blocks variables
     
@@ -160,7 +161,7 @@ public class raymarchcamera : SceneViewFilter
         _raymarchMaterial.SetVector("_LightColor", _LightColor);
 
 
-        _raymarchMaterial.SetFloatArray("_Array", array);
+        _raymarchMaterial.SetInt("plane", _plane); 
 
         //-------------- Blocks variables
         _raymarchMaterial.SetFloatArray("_shapes", shapes);
@@ -179,6 +180,15 @@ public class raymarchcamera : SceneViewFilter
         _raymarchMaterial.SetTexture("_MainTex", source);
 
         PushCoords(source, destination);
+    }
+
+    public void UpdateSettings(float precision, float smooth, float max_dist, float max_steps, bool plane)
+    {
+        _accuracy = precision;
+        _smooth1 = smooth;
+        _maxDistance = max_dist;
+        _maxIterations = (int)max_steps;
+        _plane = plane ? 1 : 0; 
     }
 
     public void UpdateData(List<Block> blocks) {

@@ -30,9 +30,6 @@
 
             //--- INPUT DATA BLOCKS
 
-            int _ArrayLength = 0;
-            uniform float _Array[SCENE_SIZE];
-
             uniform float _shapes[SCENE_SIZE];
             uniform float _ops[SCENE_SIZE];
             uniform float _sel[SCENE_SIZE];
