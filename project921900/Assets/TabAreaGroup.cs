@@ -13,7 +13,14 @@ public class TabAreaGroup : MonoBehaviour
 
     public TabButton selectedTab;
 
-    public List<GameObject> pageToSwap; 
+    public List<GameObject> pageToSwap;
+
+    public Controller controller; 
+
+    private void Awake()
+    {
+        controller = FindObjectOfType<Controller>();     
+    }
 
     public void Subscribe(TabButton button) {
         if (tabButton == null) {
@@ -76,6 +83,18 @@ public class TabAreaGroup : MonoBehaviour
                                                 button.background.color.g, 
                                                 button.background.color.b, 
                                                 tabIdle); 
+        }
+    }
+
+    public void UpdateColors() {
+        for (int i = 1; i < 10; i++)
+        {
+            if (i < controller.all_blocks.Count) {
+                Color c = controller.all_blocks[i].color;
+                tabButton[i].background.color = new Color(c.r, c.g, c.b, tabButton[i].background.color.a); 
+            }
+            else
+                tabButton[i].background.color = new Color(1, 1, 1, tabIdle); 
         }
     }
 }

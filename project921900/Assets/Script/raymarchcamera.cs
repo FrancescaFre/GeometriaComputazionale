@@ -118,7 +118,6 @@ public class raymarchcamera : SceneViewFilter
 
     //---- Blocks variables
     
-    float[] array = new float[] { 1, 2, 3, 4 };
     float[] shapes = new float[10];
     float[] ops = new float[10];
     float[] sel = new float[10];
