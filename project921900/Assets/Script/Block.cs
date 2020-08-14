@@ -9,7 +9,7 @@ public class Block : MonoBehaviour
     
     public int shape;
     public int op;
-    public int selected;
+    public bool selected;
 
     public float size;
     public int auto;
@@ -20,17 +20,20 @@ public class Block : MonoBehaviour
     public Vector4 rotation; //bool sugli assi e il quarto valore è il grado di rotazione
     public Color color;
 
+    public SphereCollider collider; 
     
     public void Awake() {
         shape = Random.Range(1, 4);
         op = 0;
-        selected = 0;
+        selected = false;
         size = Random.Range(0.5f, 2);
-        transform.position = new Vector3(Random.Range(-4, 4), Random.Range(-4, 4), 0); 
+        transform.position = new Vector3(0, 0, 0); 
+        collider = GetComponent<SphereCollider>();
     }
 
     public void Update()
     {
+        collider.radius = size+1; 
         position = transform.position;
     }
 

@@ -31,7 +31,6 @@ public class TabButton : MonoBehaviour, IPointerEnterHandler, IPointerClickHandl
     {
         tabGroup = GetComponentInParent<TabAreaGroup>(); 
         background = GetComponent<Image>();
-        tabGroup.Subscribe(this); 
     }
 
 

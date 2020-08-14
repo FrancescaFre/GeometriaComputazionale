@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
@@ -15,22 +16,20 @@ public class TabAreaGroup : MonoBehaviour
 
     public List<GameObject> pageToSwap;
 
-    public Controller controller; 
+    public Controller controller;
+    public UI_Controller ui; 
 
     private void Awake()
     {
-        controller = FindObjectOfType<Controller>();     
+        controller = FindObjectOfType<Controller>();
+        ui = FindObjectOfType<UI_Controller>();
+
+        foreach (GameObject go in pageToSwap)
+            go.SetActive(false); 
+     
     }
 
-    public void Subscribe(TabButton button) {
-        if (tabButton == null) {
-            tabButton = new List<TabButton>(); 
-        }
-
-        tabButton.Add(button);
-    }
-
-    public void OnTabEnter(TabButton button) {
+    public void OnTabEnter(TabButton button) { //hover
         ResetTabs();
         if (selectedTab == null || button != selectedTab)
             button.background.color = new Color(button.background.color.r,
@@ -39,13 +38,13 @@ public class TabAreaGroup : MonoBehaviour
                                                 tabHover);
     }
 
-    public void OnTabExit(TabButton button) {
+    public void OnTabExit(TabButton button) { //via dal pulsante
         ResetTabs(); 
     }
 
-    public void onTabSelected(TabButton button) {
+    public void onTabSelected(TabButton button) { //cliccare sul tab
 
-        if (selectedTab == button) {
+        if (selectedTab == button) { //se premo sulla stessa tab per chiuderla
             selectedTab = null;
             ResetTabs();
             int i = button.transform.GetSiblingIndex();
@@ -67,34 +66,31 @@ public class TabAreaGroup : MonoBehaviour
         for (int i = 0; i < pageToSwap.Count; i++)
         {
             if (i == index)
+            {
                 pageToSwap[i].SetActive(true);
+                if (i > 0)
+                    ui.Set_ActiveTab(pageToSwap[i], i-1);
+            }
+
             else
                 pageToSwap[i].SetActive(false); 
         }
     }
 
     public void ResetTabs() {
-        foreach (TabButton button in tabButton)
-        {
-            if (selectedTab != null && button == selectedTab)
-                continue; 
 
-            button.background.color = new Color(button.background.color.r, 
-                                                button.background.color.g, 
-                                                button.background.color.b, 
-                                                tabIdle); 
+        for (int i = 0; i < 11; i++)
+        {
+            Color color = Color.white;
+
+            if (i > 0 && i-1< controller.all_blocks.Count)
+                color = controller.all_blocks[i - 1].color;
+        
+
+            color.a = (selectedTab != null && tabButton[i] == selectedTab) ? tabActive : tabIdle;
+            tabButton[i].background.color = color;
         }
+       
     }
 
-    public void UpdateColors() {
-        for (int i = 1; i < 10; i++)
-        {
-            if (i < controller.all_blocks.Count) {
-                Color c = controller.all_blocks[i].color;
-                tabButton[i].background.color = new Color(c.r, c.g, c.b, tabButton[i].background.color.a); 
-            }
-            else
-                tabButton[i].background.color = new Color(1, 1, 1, tabIdle); 
-        }
-    }
 }

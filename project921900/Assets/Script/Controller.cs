@@ -6,6 +6,9 @@ public class Controller : MonoBehaviour
 {
 
     public List<Block> all_blocks;
+
+    public Block block_toInstantiate; 
+
     public raymarchcamera rm;
 
     public float precision;
@@ -14,8 +17,7 @@ public class Controller : MonoBehaviour
     public float max_steps;
 
     public bool plane = false; 
-    //RaymarchingMaster rm; 
-    // Start is called before the first frame update
+
     void Start()
     {
         rm = GetComponent<raymarchcamera>();
@@ -25,18 +27,28 @@ public class Controller : MonoBehaviour
         rm.UpdateSettings(precision, smooth, max_dist, max_steps, plane);
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    public void UpdateScene() {
+
+        rm.UpdateData(all_blocks);
+    }
+
+
+
+    public void remove_block(int i)
     {
-        all_blocks.Clear();
+        Block b = all_blocks[i];
+        all_blocks.RemoveAt(i); 
 
-        foreach (Block block in FindObjectsOfType<Block>())
-        {
-          
-            if (!all_blocks.Contains(block) && all_blocks.Count < 10)
-                all_blocks.Add(block);               
+        Destroy(b.gameObject);
+        UpdateScene();
+    }
+    public void add_block()
+    {
+        if (all_blocks.Count <= 9)
+        { 
+            Block new_block = Instantiate(block_toInstantiate);
+            all_blocks.Add(new_block);
+            UpdateScene();
         }
-
-        rm.UpdateData(all_blocks); 
     }
 }

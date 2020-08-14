@@ -208,7 +208,7 @@ public class raymarchcamera : SceneViewFilter
         {
             shapes[i] = blocks[i].shape;
             ops[i] = blocks[i].op;
-            sel[i] = blocks[i].selected;
+            sel[i] = blocks[i].selected ? 1 : 0;
             size[i] = blocks[i].size;
             auto[i] = blocks[i].auto;
             morphs[i] = blocks[i].morph;
