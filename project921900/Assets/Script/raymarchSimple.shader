@@ -49,7 +49,6 @@
             uniform float _maxDistance;
             uniform float _boxround;
             uniform float _smooth1;
-            uniform float _smooth2;
             uniform float _LightInt;
             uniform float _ShadowIntensity;
             uniform float _penumbra;
@@ -206,7 +205,7 @@
                 for (int j = 0; j < SCENE_SIZE; j++) {
                     if (_ops[j] == 1) {
                         Hit shape = ShapeDistance(p,j);
-                        result.dist = SmoothSubtraction( shape.dist, result.dist, _smooth2);
+                        result.dist = SmoothSubtraction( shape.dist, result.dist, _smooth1);
                     }
                 }
 
