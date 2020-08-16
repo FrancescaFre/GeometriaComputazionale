@@ -12,9 +12,12 @@ public class TabButton : MonoBehaviour, IPointerEnterHandler, IPointerClickHandl
 
     public Image background;
 
+    public bool selectable; 
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        tabGroup.onTabSelected(this); 
+        if(selectable)
+            tabGroup.onTabSelected(this); 
     }
 
     public void OnPointerEnter(PointerEventData eventData)

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +8,8 @@ public class UI_Controller : MonoBehaviour
 {
 
     Controller controller;
-    TabAreaGroup tabs; 
+    TabAreaGroup tabs;
+    cameraController cam; 
     
     GameObject activePage;
     int activeObj; 
@@ -16,10 +18,14 @@ public class UI_Controller : MonoBehaviour
     void Start()
     {
         controller = FindObjectOfType<Controller>();
-        tabs = FindObjectOfType<TabAreaGroup>(); 
+        tabs = FindObjectOfType<TabAreaGroup>();
+        cam = FindObjectOfType<cameraController>(); 
     }
 
     #region World Settings
+    public void Set_camDistance(float value) {
+        cam.distanceToTarget = value; 
+    }
     public void Set_precision(float value)
     {
         controller.precision = value;
@@ -60,27 +66,42 @@ public class UI_Controller : MonoBehaviour
     #region Block Settings
 
     public void ADD_REMOVE()
-    {
-        Text text = GameObject.Find("AddRemove").GetComponentInChildren<Text>(); 
-        Debug.Log(text.text); 
+    { 
+
+        Text text = GameObject.Find("AddRemove").GetComponentInChildren<Text>();
+
         if (text.text == "ADD")
         {
-            text.text = "REMOVE";
             controller.add_block();
             tabs.ResetTabs();
-            activePage.GetComponent<Image>().color = controller.all_blocks[activeObj].color + (new Color(0.5f, 0.5f, 0.5f, 0.4f));
+         
         }
-
         else
         {
-            text.text = "ADD";
-            Debug.Log("del"); 
+            Debug.Log("del");
             controller.remove_block(activeObj);
-            tabs.ResetTabs(); 
+            tabs.ResetTabs();
+          
+        }
+        checkButton();
+    }
+
+    public void checkButton()
+    {
+        Text text = GameObject.Find("AddRemove").GetComponentInChildren<Text>();
+       
+        if (text.text == "ADD" && controller.all_blocks.Count == activeObj+1)
+        {
+            text.text = "REMOVE";
+            activePage.GetComponent<Image>().color = (controller.all_blocks[activeObj].color + (new Color(0.5f, 0.5f, 0.5f, 0.0f))) * 0.6f;
+        }
+        else if (text.text == "REMOVE" && controller.all_blocks.Count == activeObj)
+        {
+            text.text = "ADD";
             activePage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.4f);
         }
-
     }
+
     public void Set_shape(int value) {
         int x = value + 1;
         controller.all_blocks[activeObj].shape = x;
@@ -94,7 +115,6 @@ public class UI_Controller : MonoBehaviour
         controller.all_blocks[activeObj].op = x;
 
         controller.UpdateScene();
-
     }
 
     public void Set_selector()
@@ -113,7 +133,9 @@ public class UI_Controller : MonoBehaviour
 
     public void Set_zPos(float z)
     {
-        controller.all_blocks[activeObj].transform.position = new Vector3(controller.all_blocks[activeObj].position.x, controller.all_blocks[activeObj].position.y, z);
+        float actualz = controller.all_blocks[activeObj].transform.position.z;
+        z = Mathf.Clamp(actualz - z, -10, +10);
+        controller.all_blocks[activeObj].transform.position = new Vector3(controller.all_blocks[activeObj].transform.position.x, controller.all_blocks[activeObj].transform.position.y, z); 
 
         controller.UpdateScene();
     }
@@ -146,12 +168,16 @@ public class UI_Controller : MonoBehaviour
         controller.UpdateScene();
     }
 
-    public void Set_Color(Color c) {
-       
-        controller.all_blocks[activeObj].color = c;
+    public void Set_Color(Color c)
+    {
+
         controller.UpdateScene();
         tabs.ResetTabs();
-        activePage.GetComponent<Image>().color = controller.all_blocks[activeObj].color * 0.4f + (new Color(0.5f, 0.5f, 0.5f, 0f));
+        if (activeObj+1 <= controller.all_blocks.Count)
+        {
+            controller.all_blocks[activeObj].color = c;
+            activePage.GetComponent<Image>().color = (controller.all_blocks[activeObj].color + (new Color(0.5f, 0.5f, 0.5f, 0f))) * 0.6f ;
+        }
     }
     #endregion
 
@@ -160,8 +186,11 @@ public class UI_Controller : MonoBehaviour
         activePage = active;
         activeObj = i;
         if (i < controller.all_blocks.Count)
-            activePage.GetComponent<Image>().color = controller.all_blocks[i].color + (new Color(0.5f,0.5f,0.5f, 0.4f));
-        
+            activePage.GetComponent<Image>().color = (controller.all_blocks[activeObj].color + (new Color(0.5f, 0.5f, 0.5f, 0f))) * 0.6f;
+
+
+
+        checkButton(); 
     }
     #endregion
 }

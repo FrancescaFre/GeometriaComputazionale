@@ -11,6 +11,7 @@ public class TabAreaGroup : MonoBehaviour
     public float tabIdle;
     public float tabHover;
     public float tabActive;
+    public float tabNotAvailable;
 
     public TabButton selectedTab;
 
@@ -26,7 +27,6 @@ public class TabAreaGroup : MonoBehaviour
 
         foreach (GameObject go in pageToSwap)
             go.SetActive(false); 
-     
     }
 
     public void OnTabEnter(TabButton button) { //hover
@@ -44,6 +44,7 @@ public class TabAreaGroup : MonoBehaviour
 
     public void onTabSelected(TabButton button) { //cliccare sul tab
 
+        
         if (selectedTab == button) { //se premo sulla stessa tab per chiuderla
             selectedTab = null;
             ResetTabs();
@@ -69,7 +70,10 @@ public class TabAreaGroup : MonoBehaviour
             {
                 pageToSwap[i].SetActive(true);
                 if (i > 0)
-                    ui.Set_ActiveTab(pageToSwap[i], i-1);
+                {
+                    ui.Set_ActiveTab(pageToSwap[i], i - 1);
+                    ui.checkButton();
+                }
             }
 
             else
@@ -81,13 +85,16 @@ public class TabAreaGroup : MonoBehaviour
 
         for (int i = 0; i < 11; i++)
         {
+            tabButton[i].selectable = true;
+            if (i > 1 && i > controller.all_blocks.Count+1)
+                tabButton[i].selectable = false; 
+
             Color color = Color.white;
 
             if (i > 0 && i-1< controller.all_blocks.Count)
                 color = controller.all_blocks[i - 1].color;
         
-
-            color.a = (selectedTab != null && tabButton[i] == selectedTab) ? tabActive : tabIdle;
+            color.a = (selectedTab != null && tabButton[i] == selectedTab) ? tabActive : tabButton[i].selectable ? tabIdle : tabNotAvailable ;
             tabButton[i].background.color = color;
         }
        

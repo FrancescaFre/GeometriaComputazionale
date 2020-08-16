@@ -194,7 +194,7 @@
               
                 
                 //union
-                for (int i = 0; i < _scene_size; i++) {
+                for (int i = 0; i < _scene_size; i++ ) {
                     if (_ops[i] == 0.0) {
                         Hit shape = ShapeDistance(p, i);
                         result.dist = SmoothUnion(result.dist, shape.dist, _smooth1);
@@ -298,6 +298,8 @@
             }
 
 
+         
+
 
             fixed4 frag(v2f i) : SV_Target
             {
@@ -306,21 +308,18 @@
                 fixed3 col = tex2D(_MainTex, i.uv);
                 float3 rayDirection = normalize(i.ray.xyz);
                 float3 rayOrigin = _WorldSpaceCameraPos;
-                   
-                
-                //update data
-               
-               
+  
                 //to do: mettere un campo in rm per indicare il result.w = 0, in modo che appaia lo sfondo
                 //fixed4 result = raymarching(rayOrigin, rayDirection, depth);
                 RM raymarch = Raymarching(rayOrigin, rayDirection, depth);
-
+            
                 float4 color = float4(0, 0, 0, 0); 
+
                 if (raymarch.hit.dist < _accuracy)
                 {
                     float3 hit_point = rayOrigin + rayDirection * raymarch.travel;
                       
-                    color = float4(Rendering(hit_point, rayOrigin, raymarch.hit),1) ;
+                    color = float4(Rendering(hit_point, rayOrigin, raymarch.hit),1);
                 }
 
                 return fixed4(col * (1.0 - color.w) + color.xyz * color.w, 1.0);

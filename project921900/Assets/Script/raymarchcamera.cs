@@ -93,13 +93,10 @@ public class raymarchcamera : SceneViewFilter
     }
     #endregion
 
-    public bool test = false; 
-
     public float _accuracy = 0.01f;
     public float _maxDistance = 200;
     public float _boxround;
     public float _smooth1;
-    public float _smooth2;
     public float _LightInt = 1;
     public float _ShadowIntensity = 0.5f;
     public float _penumbra = 0.4f;
@@ -146,8 +143,7 @@ public class raymarchcamera : SceneViewFilter
         _raymarchMaterial.SetFloat("_accuracy", _accuracy);
         _raymarchMaterial.SetFloat("_maxDistance", _maxDistance);
         _raymarchMaterial.SetFloat("_smooth1", _smooth1);
-        _raymarchMaterial.SetFloat("_smooth2", _smooth2);
-
+      
         _raymarchMaterial.SetFloat("_LightInt", _LightInt);
         _raymarchMaterial.SetFloat("_ShadowIntensity", _ShadowIntensity);
         _raymarchMaterial.SetFloat("_penumbra", _penumbra);
@@ -190,8 +186,8 @@ public class raymarchcamera : SceneViewFilter
         _plane = plane ? 1 : 0; 
     }
 
-    public void UpdateData(List<Block> blocks) {
-      
+    public void UpdateData(List<Block> blocks) 
+    {
         shapes = new float[10];
         ops = new float[10];
         sel = new float[10];
@@ -215,8 +211,6 @@ public class raymarchcamera : SceneViewFilter
             positions[i] = blocks[i].position;
             rotations[i] = blocks[i].rotation;
             colors[i] = blocks[i].color;
-            
         }
-        
     }
 }

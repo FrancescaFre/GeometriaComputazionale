@@ -23,12 +23,15 @@ public class Block : MonoBehaviour
     public SphereCollider collider; 
     
     public void Awake() {
-        shape = Random.Range(1, 4);
+        shape = 1;
         op = 0;
         selected = false;
         size = Random.Range(0.5f, 2);
         transform.position = new Vector3(0, 0, 0); 
         collider = GetComponent<SphereCollider>();
+        rotation = new Vector4(0, 1, 1, 0);
+        position = transform.position;
+        color = Color.red; 
     }
 
     public void Update()
