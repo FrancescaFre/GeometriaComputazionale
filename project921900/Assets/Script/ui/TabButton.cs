@@ -12,7 +12,9 @@ public class TabButton : MonoBehaviour, IPointerEnterHandler, IPointerClickHandl
 
     public Image background;
 
-    public bool selectable; 
+    public bool selectable;
+
+    public bool existObj = false; 
 
     public void OnPointerClick(PointerEventData eventData)
     {

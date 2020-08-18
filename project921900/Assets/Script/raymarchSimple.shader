@@ -298,9 +298,6 @@
             }
 
 
-         
-
-
             fixed4 frag(v2f i) : SV_Target
             {
                 float depth = LinearEyeDepth(tex2D(_CameraDepthTexture, i.uv).r);
@@ -309,8 +306,6 @@
                 float3 rayDirection = normalize(i.ray.xyz);
                 float3 rayOrigin = _WorldSpaceCameraPos;
   
-                //to do: mettere un campo in rm per indicare il result.w = 0, in modo che appaia lo sfondo
-                //fixed4 result = raymarching(rayOrigin, rayDirection, depth);
                 RM raymarch = Raymarching(rayOrigin, rayDirection, depth);
             
                 float4 color = float4(0, 0, 0, 0); 

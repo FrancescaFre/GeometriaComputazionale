@@ -31,12 +31,8 @@ public class cameraController : MonoBehaviour
             float rotationAroundYAxis = -direction.x * 180; // camera moves horizontally
             float rotationAroundXAxis = direction.y * 180; // camera moves vertically
 
-            
-
             cam.transform.Rotate(new Vector3(1, 0, 0), rotationAroundXAxis);
             cam.transform.Rotate(new Vector3(0, 1, 0), rotationAroundYAxis, Space.World); // <— This is what makes it work!
-
-            
 
             previousPosition = newPosition;
         }

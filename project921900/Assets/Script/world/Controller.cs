@@ -21,6 +21,10 @@ public class Controller : MonoBehaviour
     void Start()
     {
         rm = GetComponent<raymarchcamera>();
+        precision = rm._accuracy;
+        smooth = rm._smooth1;
+        max_dist = rm._maxDistance;
+        max_steps = rm._maxIterations; 
     }
 
     public void UpdateSettings() {
