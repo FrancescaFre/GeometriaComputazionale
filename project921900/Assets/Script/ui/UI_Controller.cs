@@ -102,6 +102,42 @@ public class UI_Controller : MonoBehaviour
             tabs.tabButton[activeObj].existObj = false; 
             activePage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.4f);
         }
+
+        if (tabs.tabButton[activeObj].existObj) {
+            Dropdown dp = GameObject.Find("shape").GetComponent<Dropdown>();
+            Block b = controller.all_blocks[activeObj]; 
+
+            dp.captionText.text = dp.options[b.shape -1].text;
+            dp.value = b.shape - 1;
+
+            dp = GameObject.Find("operator").GetComponent<Dropdown>();
+            dp.captionText.text = dp.options[b.op].text;
+            dp.value = b.op;
+
+
+            dp = GameObject.Find("axis").GetComponent<Dropdown>();
+            int v = 0;
+            if (b.rotation[0] == 0)
+                v = 0;
+            if (b.rotation[1] == 0)
+                v = 1;
+            if (b.rotation[2] == 0)
+                v = 2; 
+
+            dp.captionText.text = dp.options[v].text;
+            dp.value = v; 
+
+
+            dp = GameObject.Find("shape").GetComponent<Dropdown>();
+            dp.captionText.text = dp.options[b.shape - 1].text;
+            dp.value = b.shape - 1;
+
+            Slider s = GameObject.Find("size").GetComponent<Slider>();
+            s.value = b.size; 
+         
+            s = GameObject.Find("rotation").GetComponent<Slider>();
+            s.value = b.rotation.w;
+        }
     }
 
     public void Set_shape(int value) {
@@ -140,15 +176,31 @@ public class UI_Controller : MonoBehaviour
         controller.UpdateScene();
     }
 
+    public void Set_xPos(float x)
+    {
+        if (!tabs.tabButton[activeObj].existObj) return;
+        controller.all_blocks[activeObj].transform.position = new Vector3(x, controller.all_blocks[activeObj].transform.position.y, controller.all_blocks[activeObj].transform.position.z);
+
+        controller.UpdateScene();
+        checkButton();
+    }
+    public void Set_yPos(float y)
+    {
+        if (!tabs.tabButton[activeObj].existObj) return;
+        controller.all_blocks[activeObj].transform.position = new Vector3(controller.all_blocks[activeObj].transform.position.x, y, controller.all_blocks[activeObj].transform.position.z);
+
+        controller.UpdateScene();
+        checkButton();
+    }
+
+
     public void Set_zPos(float z)
     {
         if (!tabs.tabButton[activeObj].existObj) return;
-
-        float actualz = controller.all_blocks[activeObj].transform.position.z;
-        z = Mathf.Clamp(actualz - z, -10, +10);
         controller.all_blocks[activeObj].transform.position = new Vector3(controller.all_blocks[activeObj].transform.position.x, controller.all_blocks[activeObj].transform.position.y, z); 
 
         controller.UpdateScene();
+        checkButton();
     }
 
     public void Set_rotationAngle(float value)
@@ -160,6 +212,7 @@ public class UI_Controller : MonoBehaviour
         controller.all_blocks[activeObj].rotation = new_rot;
 
         controller.UpdateScene();
+        checkButton();
     }
 
     public void Set_rotationAxis(int a)
@@ -181,6 +234,7 @@ public class UI_Controller : MonoBehaviour
                 break;
         }
         controller.UpdateScene();
+        checkButton();
     }
 
     public void Set_Color(Color c)
